@@ -55,7 +55,7 @@ print(bet_amount)
 # print("API Status:", response.status_code)
 # all_data = json.loads(response.text)
 
-#TODO delete this when switching to real API
+#TODO delete this when switching to the real API
 all_data = sample_data
 
 # TODO only pull data for the selected team
@@ -80,6 +80,16 @@ matchbook_odds = 0
 betway_odds = 0
 betfred_odds = 0
 
+# Determine the opponenent and print name
+if all_data['data'][0]['teams'][0] == "New York Yankees":
+    opponent = all_data['data'][0]['teams'][1]
+else:
+    opponent = all_data['data'][0]['teams'][0]
 
+print('Opponent:', opponent)
+
+# Print game day
+game_day = all_data['data'][0]['commence_time'].split("T")[0]
+print('Game Day:', game_day)
 
 # no input for game, will just do next game
