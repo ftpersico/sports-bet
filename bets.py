@@ -50,26 +50,29 @@ bet_amount = input("How much money did you want to bet? ")
 print(bet_amount)
 
 # TODO uncomment this when pulling from the API for real
-# request_url = f'https://api.the-odds-api.com/v3/odds/?apiKey={apiKey}&sport={sport}&region={region}&mkt=h2h&dateFormat=iso&oddsFormat=american'
-# response = requests.get(request_url)
-# print("API Status:", response.status_code)
-# all_data = json.loads(response.text)
+request_url = f'https://api.the-odds-api.com/v3/odds/?apiKey={apiKey}&sport={sport}&region={region}&mkt=h2h&dateFormat=iso&oddsFormat=american'
+response = requests.get(request_url)
+print("API Status:", response.status_code)
+all_data = json.loads(response.text)
 
-#TODO delete this when switching to the real API
-all_data = sample_data
+#TODO comment this out when switching to the real API. Delete after build is complete
+# all_data = sample_data
 
 # TODO only pull data for the selected team
 
 # Create a dictionary with the odds for all sites
 all_odds = {}
 
-for a in sample_data['data'][0]['sites']:
+for a in all_data['data'][0]['sites']:
     all_odds.update({
         a['site_nice'] : a['odds']['h2h'][0]
     })
 
+if not all_odds:
+    all_odds = 'Sorry no odds available'
+
 # TODO remove when done testing app 
-print(all_odds)
+print("All Odds:", all_odds)
 
 # TODO Decide if we're going to use these variables for each bet site's odds
 betfair_odds = 0
