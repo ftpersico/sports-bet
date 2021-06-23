@@ -10,3 +10,5 @@ print(team)
 
 bet_amount = input("How much money did you want to bet?")
 print(bet_amount)
+
+# no input for game, will just do next game
