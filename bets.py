@@ -44,9 +44,9 @@ def to_usd(my_price):
     return f"${my_price:,.2f}" #> $12,000.71
 
 
-avail_sports = ["MLB"]
-avail_teams = ["NYY", "TOR", "BAL", "BOS", "TB"]
-avail_teams = ["New York Yankees", "Toronto Blue Jays", "Baltimore Orioles", "Boston Red Sox", "Tamba Bay Rays"]
+avail_sports = ["baseball_mlb"]
+#avail_teams = ["NYY", "TOR", "BAL", "BOS", "TB"]
+avail_teams = ["New York Yankees", "Toronto Blue Jays", "Baltimore Orioles", "Boston Red Sox", "Tampa Bay Rays"]
 
 print("")
 print("****************************************")
@@ -54,12 +54,13 @@ print("")
 print("Welcome to Bets 'R Us")
 print("The top sports bet aggregation app in the world")
 
-sport = 'baseball_mlb'
-print('Selected sport:',sport)
+#sport = 'baseball_mlb'
+#print('Selected sport:',sport)
 
-# TODO, allow user to input a sport - input("Which sport did you want to bet on?")
+print("The following sports are available: baseball_mlb")
+# todo, allow user to input a sport - input("Which sport did you want to bet on?")
 while True:
-#     sport = input("Which sport did you want to bet on? ")
+    sport = input("Which sport did you want to bet on? ")
     if sport in avail_sports:
         break
     else:
@@ -67,20 +68,21 @@ while True:
         print("")
 
 while True:
-#     team = input("Which team did you want to bet on? ")
+    team = input("Which team did you want to bet on? ")
+    team = str.title(team)
     if team in avail_teams:
         break
     else:
         print("Sorry, that team isn't available at this time, please try again")
         print("")
 
-team = 'New York Yankees'
-# TODO, allow user to input a team - input("Which team did you want to bet on?")
+#team = 'New York Yankees'
+# todo, allow user to input a team - input("Which team did you want to bet on?")
 print('Selected Team:',team)
 
 
 region = 'uk'
-# TODO, allow user to input a region - input("Which region are you betting in?")
+# todo, allow user to input a region - input("Which region are you betting in?")
 print('Selected Region:',region.upper())
 
 # Pull api key from ENV file
@@ -92,16 +94,16 @@ bet_amount = input("How much money did you want to bet? ")
 print(bet_amount)
 print("")
 
-# TODO uncomment this when pulling from the API for real
+# todo uncomment this when pulling from the API for real
 # request_url = f'https://api.the-odds-api.com/v3/odds/?apiKey={apiKey}&sport={sport}&region={region}&mkt=h2h&dateFormat=iso&oddsFormat=american'
 # response = requests.get(request_url)
 # print("API Status:", response.status_code)
 # all_data = json.loads(response.text)
 
-#TODO comment this out when switching to the real API. Delete after build is complete
+#todo comment this out when switching to the real API. Delete after build is complete
 all_data = sample_data
 
-# TODO only pull data for the selected team
+# todo only pull data for the selected team
 
 # Create a dictionary with the odds for all sites
 all_odds = {}
@@ -114,10 +116,10 @@ for a in all_data['data'][0]['sites']:
 if not all_odds:
     all_odds = 'Sorry no odds available'
 
-# TODO remove when done testing app 
+# todo remove when done testing app 
 print("All Odds:", all_odds)
 
-# TODO Decide if we're going to use these variables for each bet site's odds
+# todo Decide if we're going to use these variables for each bet site's odds
 betfair_odds = 0
 williamhill_odds = 0 
 paddypower_odds = 0
