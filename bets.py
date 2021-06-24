@@ -1,3 +1,4 @@
+
 import requests
 import json
 from dotenv import load_dotenv
@@ -26,12 +27,48 @@ sample_data = {
   ]
 }
 
+# convert to USD formart
+def to_usd(my_price):
+    """
+    Converts a numeric value to usd-formatted string, for printing and display purposes.
+
+    Param: my_price (int or float) like 4000.444444
+
+    Example: to_usd(4000.444444)
+
+    Returns: $4,000.44
+    """
+    return f"${my_price:,.2f}" #> $12,000.71
+
+
+avail_sports = ["MLB"]
+avail_teams = ["NYY", "TOR", "BAL", "BOS", "TB"]
+
+print("")
+print("****************************************")
+print("")
 print("Welcome to Bets 'R Us")
 print("The top sports bet aggregation app in the world")
 
 sport = 'baseball_mlb'
-# TODO, allow user to input a sport - input("Which sport did you want to bet on?")
 print('Selected sport:',sport)
+
+# TODO, allow user to input a sport - input("Which sport did you want to bet on?")
+while True:
+#     sport = input("Which sport did you want to bet on? ")
+    if sport in avail_sports:
+        break
+    else:
+        print("Sorry, that sport isn't available at this time, please try again")
+        print("")
+
+while True:
+#     team = input("Which team did you want to bet on? ")
+    if team in avail_teams:
+        break
+    else:
+        print("Sorry, that team isn't available at this time, please try again")
+        print("")
 
 team = 'New York Yankees'
 # TODO, allow user to input a team - input("Which team did you want to bet on?")
@@ -46,8 +83,14 @@ print('Selected Region:',region.upper())
 load_dotenv()
 apiKey = os.getenv("API_KEY", default=0) 
 
+
+
+
+
+
 bet_amount = input("How much money did you want to bet? ")
 print(bet_amount)
+print("")
 
 # TODO uncomment this when pulling from the API for real
 # request_url = f'https://api.the-odds-api.com/v3/odds/?apiKey={apiKey}&sport={sport}&region={region}&mkt=h2h&dateFormat=iso&oddsFormat=american'
