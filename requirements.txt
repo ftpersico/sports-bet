@@ -1,4 +1,3 @@
-# required third party packages
-
 python-dotenv
 requests
+item-getter
