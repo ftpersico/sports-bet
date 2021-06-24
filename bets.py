@@ -46,6 +46,7 @@ def to_usd(my_price):
 
 avail_sports = ["MLB"]
 avail_teams = ["NYY", "TOR", "BAL", "BOS", "TB"]
+avail_teams = ["New York Yankees", "Toronto Blue Jays", "Baltimore Orioles", "Boston Red Sox", "Tamba Bay Rays"]
 
 print("")
 print("****************************************")
