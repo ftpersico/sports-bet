@@ -64,6 +64,9 @@ while True:
     else:
         print("Sorry, that sport isn't available at this time, please try again")
         print("")
+        break
+
+team = 'Miami Marlins'
 
 while True:
 #     team = input("Which team did you want to bet on? ")
@@ -72,8 +75,8 @@ while True:
     else:
         print("Sorry, that team isn't available at this time, please try again")
         print("")
+        break
 
-team = 'New York Yankees'
 # TODO, allow user to input a team - input("Which team did you want to bet on?")
 print('Selected Team:',team)
 
@@ -100,21 +103,27 @@ print("")
 #TODO comment this out when switching to the real API. Delete after build is complete
 all_data = sample_data
 
-# TODO only pull data for the selected team
-
-# Create a dictionary with the odds for all sites
+# Filter data for first game of selected team and create a dictionary with the odds for all sites
 all_odds = {}
 
-for a in all_data['data'][0]['sites']:
-    all_odds.update({
-        a['site_nice'] : a['odds']['h2h'][0]
-    })
+for i in all_data['data']:
+    if team in i['teams']:
+        for a in i['sites']:
+            all_odds.update({
+                a['site_nice'] : a['odds']['h2h'][0]
+            })
+        
 
+# Return a value if no odds are avaialble 
 if not all_odds:
-    all_odds = 'Sorry no odds available'
+    all_odds = 'Sorry no odds available for that team'
+    
 
 # TODO remove when done testing app 
 print("All Odds:", all_odds)
+
+# TODO only pull data for the selected team
+
 
 # TODO Decide if we're going to use these variables for each bet site's odds
 betfair_odds = 0
