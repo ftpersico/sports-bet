@@ -81,9 +81,21 @@ if not all_odds:
 print(all_data)
 print(type(all_data))
 
-sorted_odds = sorted(sites, key=itemgetter('h2h'), reverse=True)
-print(sorted_odds)
 exit()
+
+#can we use a list comprehension here? 
+# proposal LC below doesn't run 
+matching_odds =[od for od in sample_data if team in od["h2h"]] 
+for matching_odd in matching_odds:
+    print(matching_odd["site"]["odds"]["h2h"])
+print(matching_odds)
+
+
+sorted_odds = sorted(matching_odds, key=itemgetter("h2h"), reverse=False)
+best_odds = sorted_odds[0]
+#needs to be descending because the favorite of the game is a negative number
+#we need to establish early if the team they want to bet on is the favorite or not
+print(sorted_odds)
 # TODO remove when done testing app 
 print("All Odds:", all_odds)
 
