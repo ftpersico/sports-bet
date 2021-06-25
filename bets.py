@@ -95,17 +95,17 @@ load_dotenv()
 apiKey = os.getenv("API_KEY", default=0) 
 
 print("")
-print("The default bet is $100")
-bet_amount = 100
-#bet_amount = input("How much money did you want to bet? ")
-print(bet_amount)
+#print("The default bet is $100")
+#bet_amount = 100
+bet_amount = float(input("How much money did you want to bet? "))
+print(f"$ {bet_amount}")
 print("")
 
 # todo uncomment this when pulling from the API for real
-# request_url = f'https://api.the-odds-api.com/v3/odds/?apiKey={apiKey}&sport={sport}&region={region}&mkt=h2h&dateFormat=iso&oddsFormat=american'
-# response = requests.get(request_url)
-# print("API Status:", response.status_code)
-# all_data = json.loads(response.text)
+#request_url = f'https://api.the-odds-api.com/v3/odds/?apiKey={apiKey}&sport={sport}&region={region}&mkt=h2h&dateFormat=iso&oddsFormat=american'
+#response = requests.get(request_url)
+#print("API Status:", response.status_code)
+#all_data = json.loads(response.text)
 
 #todo comment this out when switching to the real API. Delete after build is complete
 all_data = sample_data
@@ -138,9 +138,9 @@ print("")
 
 
 if best_odds >0:
-    win = best_odds-bet_amount
+    win = best_odds/100*bet_amount
 else:
-    win = bet_amount/odds*100
+    win = bet_amount/best_odds*100
 
 loss = bet_amount*-1
 
