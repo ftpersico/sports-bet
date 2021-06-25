@@ -98,7 +98,7 @@ print("")
 #print("The default bet is $100")
 #bet_amount = 100
 bet_amount = float(input("How much money did you want to bet? "))
-print(f"$ {bet_amount}")
+print(to_usd(bet_amount))
 print("")
 
 # todo uncomment this when pulling from the API for real
@@ -132,6 +132,24 @@ for odds in all_odds:
         best_odds = all_odds[odds]
         best_site = odds
 
+# Determine the opponenent and print name
+if all_data['data'][0]['teams'][0] == "New York Yankees":
+    opponent = all_data['data'][0]['teams'][1]
+else:
+    opponent = all_data['data'][0]['teams'][0]
+
+print("-------------------------------------")
+print(f"Selected Team: {team}")
+print('Opponent:', opponent)
+
+
+# Print game day
+game_day = all_data['data'][0]['commence_time'].split("T")[0]
+print('Game Day:', game_day)
+
+print(f"Bet amount: {to_usd(bet_amount)}")
+print("")
+
 print(f"The site with the most favorable odds is {best_site}")
 print(f"{best_site} has odds of {best_odds}")
 print("")
@@ -144,12 +162,14 @@ else:
 
 loss = bet_amount*-1
 
-print(f"If the {team} wins, your net winnings are ${win}.")
-print(f"If the {team} loses, your loss is ${bet_amount}")
+print(f"If the {team} win, your net winnings are {to_usd(win)}.")
+print(f"If the {team} lose, your loss is {to_usd(bet_amount)}")
 print("")
 
 # todo remove when done testing app 
 print("All Odds:", all_odds)
+print("-------------------------------------")
+
 
 # TODO Decide if we're going to use these variables for each bet site's odds
 betfair_odds = 0
@@ -161,17 +181,7 @@ betway_odds = 0
 betfred_odds = 0
 
 
-# Determine the opponenent and print name
-if all_data['data'][0]['teams'][0] == "New York Yankees":
-    opponent = all_data['data'][0]['teams'][1]
-else:
-    opponent = all_data['data'][0]['teams'][0]
 
-print('Opponent:', opponent)
-
-# Print game day
-game_day = all_data['data'][0]['commence_time'].split("T")[0]
-print('Game Day:', game_day)
 
 
 
