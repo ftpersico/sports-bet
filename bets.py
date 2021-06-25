@@ -53,6 +53,7 @@ print("****************************************")
 print("")
 print("Welcome to Bets 'R Us")
 print("The top sports bet aggregation app in the world")
+print("")
 
 #sport = 'baseball_mlb'
 #print('Selected sport:',sport)
@@ -60,7 +61,7 @@ print("The top sports bet aggregation app in the world")
 print("The following sports are available: baseball_mlb")
 # todo, allow user to input a sport - input("Which sport did you want to bet on?")
 while True:
-    sport = input("Which sport did you want to bet on? ")
+    sport = str.lower(input("Which sport did you want to bet on? "))
     if sport in avail_sports:
         break
     else:
@@ -93,8 +94,10 @@ print('Selected Region:',region.upper())
 load_dotenv()
 apiKey = os.getenv("API_KEY", default=0) 
 
-
-bet_amount = input("How much money did you want to bet? ")
+print("")
+print("The default bet is $100")
+bet_amount = 100
+#bet_amount = input("How much money did you want to bet? ")
 print(bet_amount)
 print("")
 
@@ -123,6 +126,28 @@ if not all_odds:
     all_odds = 'Sorry no odds available for that team'
     
 
+best_odds = 0
+for odds in all_odds:
+    if all_odds[odds] > best_odds:
+        best_odds = all_odds[odds]
+        best_site = odds
+
+print(f"The site with the most favorable odds is {best_site}")
+print(f"{best_site} has odds of {best_odds}")
+print("")
+
+
+if best_odds >0:
+    win = best_odds-bet_amount
+else:
+    win = bet_amount/odds*100
+
+loss = bet_amount*-1
+
+print(f"If the {team} wins, your net winnings are ${win}.")
+print(f"If the {team} loses, your loss is ${bet_amount}")
+print("")
+
 # todo remove when done testing app 
 print("All Odds:", all_odds)
 
@@ -135,6 +160,7 @@ matchbook_odds = 0
 betway_odds = 0
 betfred_odds = 0
 
+
 # Determine the opponenent and print name
 if all_data['data'][0]['teams'][0] == "New York Yankees":
     opponent = all_data['data'][0]['teams'][1]
@@ -146,6 +172,8 @@ print('Opponent:', opponent)
 # Print game day
 game_day = all_data['data'][0]['commence_time'].split("T")[0]
 print('Game Day:', game_day)
+
+
 
 # Defined a variable per bet site
 
