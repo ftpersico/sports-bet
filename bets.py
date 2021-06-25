@@ -23,7 +23,23 @@ sample_data = {
         {"site_key": "betfair",
           "site_nice": "Betfair",
           "last_update": "2021-06-23T01:08:41Z",
-          "odds": {"h2h": [146,-172],"h2h_lay": [174,-145]}}
+          "odds": {"h2h": [146,-250],"h2h_lay": [174,-145]}}
+      ],
+      "sites_count": 2
+    },
+    {"id": "159fb6cae00fd84860e37a3e4ebf6ba5","sport_key": "baseball_mlb", "sport_nice": "MLB",
+      "teams": ["Baltimore Orioles", "New York Yankees"],
+      "home_team": "New York Yankees",
+      "commence_time": "2021-06-23T23:05:00Z",
+      "sites": [
+        {"site_key": "paddypower",
+          "site_nice": "Paddy Power",
+          "last_update": "2021-06-23T01:08:20Z",
+          "odds": {"h2h": [300,-500]}},
+        {"site_key": "betfair",
+          "site_nice": "Betfair",
+          "last_update": "2021-06-23T01:08:41Z",
+          "odds": {"h2h": [350,-600],"h2h_lay": [174,-145]}}
       ],
       "sites_count": 2
     }
@@ -67,9 +83,9 @@ while True:
     else:
         print("Sorry, that sport isn't available at this time, please try again")
         print("")
-        break
 
-team = 'New York Yankees'
+
+# team = 'New York Yankees'
 
 while True:
     team = input("Which team did you want to bet on? ")
@@ -79,10 +95,7 @@ while True:
     else:
         print("Sorry, that team isn't available at this time, please try again")
         print("")
-        break
 
-#team = 'New York Yankees'
-# TODO, allow user to input a team - input("Which team did you want to bet on?")
 print('Selected Team:',team)
 
 
@@ -102,41 +115,37 @@ print(to_usd(bet_amount))
 print("")
 
 # todo uncomment this when pulling from the API for real
-#request_url = f'https://api.the-odds-api.com/v3/odds/?apiKey={apiKey}&sport={sport}&region={region}&mkt=h2h&dateFormat=iso&oddsFormat=american'
-#response = requests.get(request_url)
-#print("API Status:", response.status_code)
-#all_data = json.loads(response.text)
+request_url = f'https://api.the-odds-api.com/v3/odds/?apiKey={apiKey}&sport={sport}&region={region}&mkt=h2h&dateFormat=iso&oddsFormat=american'
+response = requests.get(request_url)
+print("API Status:", response.status_code)
+all_data = json.loads(response.text)
 
 #todo comment this out when switching to the real API. Delete after build is complete
-all_data = sample_data
+# all_data = sample_data
 
 # Filter data for first game of selected team and create a dictionary with the odds for all sites
 all_odds = {}
 
 for i in all_data['data']:
     if team in i['teams']:
+        team_index = i['teams'].index(team)
         for a in i['sites']:
             all_odds.update({
-                a['site_nice'] : a['odds']['h2h'][0]
+                a['site_nice'] : a['odds']['h2h'][team_index]
             })
-        
-
-# Return a value if no odds are avaialble 
-if not all_odds:
-    all_odds = 'Sorry no odds available for that team'
+        print("")
+        break
     
 
-best_odds = 0
-for odds in all_odds:
-    if all_odds[odds] > best_odds:
-        best_odds = all_odds[odds]
-        best_site = odds
-
 # Determine the opponenent and print name
-if all_data['data'][0]['teams'][0] == "New York Yankees":
-    opponent = all_data['data'][0]['teams'][1]
-else:
-    opponent = all_data['data'][0]['teams'][0]
+opponent = 'Sorry no opponent found'
+
+for i in all_data['data']:
+    if team in i['teams']:
+        if i['teams'][0] == team:
+            opponent = i['teams'][1]
+        elif i['teams'][1] == team:
+            opponent = i['teams'][0]
 
 print("-------------------------------------")
 print(f"Selected Team: {team}")
@@ -144,48 +153,45 @@ print('Opponent:', opponent)
 
 
 # Print game day
-game_day = all_data['data'][0]['commence_time'].split("T")[0]
+game_day ='Sorry no game found'
+
+for i in all_data['data']:
+    if team in i['teams']:
+        game_day = i['commence_time'].split("T")[0]
+
 print('Game Day:', game_day)
+
+# Return a value if no odds are avaialble 
+best_odds = -10000000000
+best_site = 'Sorry no sites found'
+if not all_odds:
+    all_odds = 'Sorry no odds available for that team'
+else:
+    for odds in all_odds:
+        if all_odds[odds] > best_odds:
+            best_odds = all_odds[odds]
+            best_site = odds
+
+win = 0
+if best_odds >0:
+    win = best_odds/100*bet_amount
+elif best_odds <0:
+    win = bet_amount/best_odds*100
+
+# loss = bet_amount*-1
 
 print(f"Bet amount: {to_usd(bet_amount)}")
 print("")
-
 print(f"The site with the most favorable odds is {best_site}")
 print(f"{best_site} has odds of {best_odds}")
 print("")
-
-
-if best_odds >0:
-    win = best_odds/100*bet_amount
-else:
-    win = bet_amount/best_odds*100
-
-loss = bet_amount*-1
-
 print(f"If the {team} win, your net winnings are {to_usd(win)}.")
 print(f"If the {team} lose, your loss is {to_usd(bet_amount)}")
 print("")
 
-# todo remove when done testing app 
+# TODO remove when done testing app 
 print("All Odds:", all_odds)
 print("-------------------------------------")
-
-
-# TODO Decide if we're going to use these variables for each bet site's odds
-betfair_odds = 0
-williamhill_odds = 0 
-paddypower_odds = 0
-unibet_odds = 0
-matchbook_odds = 0
-betway_odds = 0
-betfred_odds = 0
-
-
-
-
-
-
-# Defined a variable per bet site
 
 
 #need to sort the a['site_nice'] on high to low
