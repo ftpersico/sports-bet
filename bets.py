@@ -46,7 +46,7 @@ sample_data = {
   ]
 }
 
-# convert to USD formart
+# Convert to USD formart
 def to_usd(my_price):
     """
     Converts a numeric value to usd-formatted string, for printing and display purposes.
@@ -60,9 +60,10 @@ def to_usd(my_price):
     return f"${my_price:,.2f}" #> $12,000.71
 
 
+#  Define the available sports and teams to query
 avail_sports = ["baseball_mlb"]
-#avail_teams = ["NYY", "TOR", "BAL", "BOS", "TB"]
 avail_teams = ["New York Yankees", "Toronto Blue Jays", "Baltimore Orioles", "Boston Red Sox", "Tampa Bay Rays"]
+#avail_teams = ["NYY", "TOR", "BAL", "BOS", "TB"]
 
 print("")
 print("****************************************")
@@ -71,25 +72,33 @@ print("Welcome to Bets 'R Us")
 print("The top sports bet aggregation app in the world")
 print("")
 
-#sport = 'baseball_mlb'
-#print('Selected sport:',sport)
 
-print("The following sports are available: baseball_mlb")
-# todo, allow user to input a sport - input("Which sport did you want to bet on?")
+print("The following sports are available: BASEBALL")
+print("You can also enter 'DONE' to leave the program")
+
+# Allows user to input a sport to query. Checks if sport is in acceptable list
 while True:
     sport = str.lower(input("Which sport did you want to bet on? "))
+    if sport in ['baseball', 'mlb']:
+        sport = 'baseball_mlb'
+    elif sport == 'done':
+        exit() 
     if sport in avail_sports:
         break
     else:
         print("Sorry, that sport isn't available at this time, please try again")
         print("")
+print('\n')
 
+print("The following teams are available: New York Yankees, Toronto Blue Jays, Baltimore Orioles, Boston Red Sox, Tampa Bay Rays")
+print("You can also enter 'DONE' to leave the program")
 
-# team = 'New York Yankees'
-
+# Allows user to input a sport to query. Checks if sport is in acceptable list
 while True:
     team = input("Which team did you want to bet on? ")
     team = str.title(team)
+    if team == 'Done':
+        exit()
     if team in avail_teams:
         break
     else:
@@ -98,30 +107,28 @@ while True:
 
 print('Selected Team:',team)
 
-
+# TODO, allow user to input a region - input("Which region are you betting in?")
 region = 'uk'
-# todo, allow user to input a region - input("Which region are you betting in?")
 print('Selected Region:',region.upper())
 
 # Pull api key from ENV file
 load_dotenv()
 apiKey = os.getenv("API_KEY", default=0) 
 
+# Allow user to input an amount they want to bet 
 print("")
-#print("The default bet is $100")
-#bet_amount = 100
 bet_amount = float(input("How much money did you want to bet? "))
 print(to_usd(bet_amount))
 print("")
 
 # todo uncomment this when pulling from the API for real
-request_url = f'https://api.the-odds-api.com/v3/odds/?apiKey={apiKey}&sport={sport}&region={region}&mkt=h2h&dateFormat=iso&oddsFormat=american'
-response = requests.get(request_url)
-print("API Status:", response.status_code)
-all_data = json.loads(response.text)
+# request_url = f'https://api.the-odds-api.com/v3/odds/?apiKey={apiKey}&sport={sport}&region={region}&mkt=h2h&dateFormat=iso&oddsFormat=american'
+# response = requests.get(request_url)
+# print("API Status:", response.status_code)
+# all_data = json.loads(response.text)
 
 #todo comment this out when switching to the real API. Delete after build is complete
-# all_data = sample_data
+all_data = sample_data
 
 # Filter data for first game of selected team and create a dictionary with the odds for all sites
 all_odds = {}
@@ -172,11 +179,12 @@ else:
             best_odds = all_odds[odds]
             best_site = odds
 
+# Calculate the amount the user would win
 win = 0
 if best_odds >0:
     win = best_odds/100*bet_amount
 elif best_odds <0:
-    win = bet_amount/best_odds*100
+    win = bet_amount/best_odds*-100
 
 # loss = bet_amount*-1
 
@@ -194,7 +202,6 @@ print("All Odds:", all_odds)
 print("-------------------------------------")
 
 
-#need to sort the a['site_nice'] on high to low
 
 exit()
 
@@ -213,7 +220,5 @@ best_odds = sorted_odds[0]
 print(sorted_odds)
 
 # TODO remove when done testing app 
-print("All Odds:", all_odds)
+# print("All Odds:", all_odds)
 
-
-# no input for game, will just do next game
