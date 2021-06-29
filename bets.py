@@ -1,8 +1,10 @@
 import requests
 import json
-from operator import itemgetter
 from dotenv import load_dotenv
 import os
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
+from datetime import date
 
 load_dotenv()
 # TODO Delete this sample data after build is complete 
@@ -74,7 +76,7 @@ print("")
 
 
 print("The following sports are available: BASEBALL")
-print("You can also enter 'DONE' to leave the program")
+print("You can also enter 'DONE' to leave the program\n")
 
 # Allows user to input a sport to query. Checks if sport is in acceptable list
 while True:
@@ -84,14 +86,20 @@ while True:
     elif sport == 'done':
         exit() 
     if sport in avail_sports:
+        print("")
         break
     else:
         print("Sorry, that sport isn't available at this time, please try again")
         print("")
-print('\n')
 
-print("The following teams are available: New York Yankees, Toronto Blue Jays, Baltimore Orioles, Boston Red Sox, Tampa Bay Rays")
-print("You can also enter 'DONE' to leave the program")
+
+print("""The following teams are available: 
+New York Yankees
+Toronto Blue Jays
+Baltimore Orioles
+Boston Red Sox
+Tampa Bay Rays""")
+print("You can also enter 'DONE' to leave the program\n")
 
 # Allows user to input a sport to query. Checks if sport is in acceptable list
 while True:
@@ -105,9 +113,14 @@ while True:
         print("Sorry, that team isn't available at this time, please try again")
         print("")
 
-print('Selected Team:',team)
+print('Selected Team:',team,"\n")
 
-# TODO, allow user to input a region - input("Which region are you betting in?")
+while True:
+    recipient_email = input("What is your email address? ")
+    bettor_name = input("What is your name? ")
+    break
+
+
 region = 'uk'
 print('Selected Region:',region.upper())
 
@@ -122,13 +135,13 @@ print(to_usd(bet_amount))
 print("")
 
 # todo uncomment this when pulling from the API for real
-# request_url = f'https://api.the-odds-api.com/v3/odds/?apiKey={apiKey}&sport={sport}&region={region}&mkt=h2h&dateFormat=iso&oddsFormat=american'
-# response = requests.get(request_url)
-# print("API Status:", response.status_code)
-# all_data = json.loads(response.text)
+request_url = f'https://api.the-odds-api.com/v3/odds/?apiKey={apiKey}&sport={sport}&region={region}&mkt=h2h&dateFormat=iso&oddsFormat=american'
+response = requests.get(request_url)
+print("API Status:", response.status_code)
+all_data = json.loads(response.text)
 
 #todo comment this out when switching to the real API. Delete after build is complete
-all_data = sample_data
+# all_data = sample_data
 
 # Filter data for first game of selected team and create a dictionary with the odds for all sites
 all_odds = {}
@@ -197,28 +210,60 @@ print(f"If the {team} win, your net winnings are {to_usd(win)}.")
 print(f"If the {team} lose, your loss is {to_usd(bet_amount)}")
 print("")
 
-# TODO remove when done testing app 
-print("All Odds:", all_odds)
 print("-------------------------------------")
 
 
+# #can we use a list comprehension here? 
+# # proposal LC below doesn't run 
+# matching_odds =[od for od in sample_data if team in od["h2h"]] 
+# for matching_odd in matching_odds:
+#     print(matching_odd["site"]["odds"]["h2h"])
+# print(matching_odds)
+
+
+# sorted_odds = sorted(matching_odds, key=itemgetter("h2h"), reverse=False)
+# best_odds = sorted_odds[0]
+# #needs to be descending because the favorite of the game is a negative number
+# #we need to establish early if the team they want to bet on is the favorite or not
+# print(sorted_odds)
+
+#begin email service 
+
+SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
+SENDER_EMAIL_ADDRESS = os.getenv("SENDER_EMAIL_ADDRESS")
+
+def send_email(subject, html, recipient_address=recipient_email):
+    """
+    Sends an email with the specified subject and html contents to the specified recipient,
+    If recipient is not specified, sends to the admin's sender address by default.
+    """
+    client = SendGridAPIClient(SENDGRID_API_KEY) #> <class 'sendgrid.sendgrid.SendGridAPIClient>
+    print("CLIENT:", type(client))
+    print("SUBJECT:", subject)
+    #print("HTML:", html)
+    message = Mail(from_email=SENDER_EMAIL_ADDRESS, to_emails=recipient_address, subject=subject, html_content=html)
+    try:
+        response = client.send(message)
+        print("RESPONSE:", type(response)) #> <class 'python_http_client.client.Response'>
+        print(response.status_code) #> 202 indicates SUCCESS
+        return response
+    except Exception as e:
+        print("OOPS", type(e), e.message)
+        return None
+
+# if __name__ == "__main__":
+    # DISPLAY OUTPUTS
+todays_date = date.today().strftime('%A, %B %d, %Y')
+html = ""
+html += f"<h3>Hey {bettor_name}, good luck on your bet!!</h3>"
+html += "<h4>Today's Date</h4>"
+html += f"<p>{todays_date}</p>"
+html += f"<h4>We're recommending you book your bet on {best_site} since the odds are {best_odds}</h4>"
+html += f"<h4>Below are the sites and odds scanned</h4>"
+for i in all_odds:
+    html += f"<b>Site:</b> {i} / <b>Odds:</b> {all_odds[i]}<br>" 
+html += f"<h5>Remember, bet with your head, not over it! If you feel like your gambling addiction is spirling out of control because you're a complete degenerate, please contact Gamblers Anonymous at 1-800-522-4700</h5>"
+send_email(subject="Your recommended betting site with Bets 'R Us", html=html)
+
 
 exit()
-
-#can we use a list comprehension here? 
-# proposal LC below doesn't run 
-matching_odds =[od for od in sample_data if team in od["h2h"]] 
-for matching_odd in matching_odds:
-    print(matching_odd["site"]["odds"]["h2h"])
-print(matching_odds)
-
-
-sorted_odds = sorted(matching_odds, key=itemgetter("h2h"), reverse=False)
-best_odds = sorted_odds[0]
-#needs to be descending because the favorite of the game is a negative number
-#we need to establish early if the team they want to bet on is the favorite or not
-print(sorted_odds)
-
-# TODO remove when done testing app 
-# print("All Odds:", all_odds)
-
