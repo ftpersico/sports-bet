@@ -10,44 +10,6 @@ load_dotenv()
 # TODO Delete this sample data after build is complete 
 API_KEY = os.getenv("API_KEY", default=0)
 
-sample_data = {
-  "success": "true",
-  "data": [
-    {"id": "159fb6cae00fd84860e37a3e4ebf6ba5","sport_key": "baseball_mlb", "sport_nice": "MLB",
-      "teams": ["Kansas City Royals", "New York Yankees"],
-      "home_team": "New York Yankees",
-      "commence_time": "2021-06-22T23:05:00Z",
-      "sites": [
-        {"site_key": "paddypower",
-          "site_nice": "Paddy Power",
-          "last_update": "2021-06-23T01:08:20Z",
-          "odds": {"h2h": [150,-200]}},
-        {"site_key": "betfair",
-          "site_nice": "Betfair",
-          "last_update": "2021-06-23T01:08:41Z",
-          "odds": {"h2h": [146,-250],"h2h_lay": [174,-145]}}
-      ],
-      "sites_count": 2
-    },
-    {"id": "159fb6cae00fd84860e37a3e4ebf6ba5","sport_key": "baseball_mlb", "sport_nice": "MLB",
-      "teams": ["Baltimore Orioles", "New York Yankees"],
-      "home_team": "New York Yankees",
-      "commence_time": "2021-06-23T23:05:00Z",
-      "sites": [
-        {"site_key": "paddypower",
-          "site_nice": "Paddy Power",
-          "last_update": "2021-06-23T01:08:20Z",
-          "odds": {"h2h": [300,-500]}},
-        {"site_key": "betfair",
-          "site_nice": "Betfair",
-          "last_update": "2021-06-23T01:08:41Z",
-          "odds": {"h2h": [350,-600],"h2h_lay": [174,-145]}}
-      ],
-      "sites_count": 2
-    }
-  ]
-}
-
 # Convert to USD formart
 def to_usd(my_price):
     """
@@ -134,14 +96,11 @@ bet_amount = float(input("How much money did you want to bet? "))
 print(to_usd(bet_amount))
 print("")
 
-# todo uncomment this when pulling from the API for real
+# Get response from The Odds API
 request_url = f'https://api.the-odds-api.com/v3/odds/?apiKey={apiKey}&sport={sport}&region={region}&mkt=h2h&dateFormat=iso&oddsFormat=american'
 response = requests.get(request_url)
 print("API Status:", response.status_code)
 all_data = json.loads(response.text)
-
-#todo comment this out when switching to the real API. Delete after build is complete
-# all_data = sample_data
 
 # Filter data for first game of selected team and create a dictionary with the odds for all sites
 all_odds = {}
@@ -156,7 +115,6 @@ for i in all_data['data']:
         print("")
         break
     
-
 # Determine the opponenent and print name
 opponent = 'Sorry no opponent found'
 
@@ -170,7 +128,6 @@ for i in all_data['data']:
 print("-------------------------------------")
 print(f"Selected Team: {team}")
 print('Opponent:', opponent)
-
 
 # Print game day
 game_day ='Sorry no game found'
@@ -199,7 +156,6 @@ if best_odds >0:
 elif best_odds <0:
     win = bet_amount/best_odds*-100
 
-# loss = bet_amount*-1
 
 print(f"Bet amount: {to_usd(bet_amount)}")
 print("")
@@ -212,22 +168,7 @@ print("")
 
 print("-------------------------------------")
 
-
-# #can we use a list comprehension here? 
-# # proposal LC below doesn't run 
-# matching_odds =[od for od in sample_data if team in od["h2h"]] 
-# for matching_odd in matching_odds:
-#     print(matching_odd["site"]["odds"]["h2h"])
-# print(matching_odds)
-
-
-# sorted_odds = sorted(matching_odds, key=itemgetter("h2h"), reverse=False)
-# best_odds = sorted_odds[0]
-# #needs to be descending because the favorite of the game is a negative number
-# #we need to establish early if the team they want to bet on is the favorite or not
-# print(sorted_odds)
-
-#begin email service 
+#Call email service 
 
 SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
 SENDER_EMAIL_ADDRESS = os.getenv("SENDER_EMAIL_ADDRESS")
@@ -251,8 +192,7 @@ def send_email(subject, html, recipient_address=recipient_email):
         print("OOPS", type(e), e.message)
         return None
 
-# if __name__ == "__main__":
-    # DISPLAY OUTPUTS
+# Display outputs in email
 todays_date = date.today().strftime('%A, %B %d, %Y')
 html = ""
 html += f"<h3>Hey {bettor_name}, good luck on your bet!!</h3>"
