@@ -8,7 +8,7 @@ from datetime import date
 
 
 # Filter data for first game of selected team and create a dictionary with the odds for all sites
-def create_dictionary(data):
+def create_dictionary(data,team):
     for i in data['data']:
         if team in i['teams']:
             team_index = i['teams'].index(team)
@@ -122,7 +122,7 @@ if __name__ == "__main__":
 
     all_odds = {}
 
-    create_dictionary(all_data)
+    create_dictionary(all_data,team)
 
     # Determine the opponenent and print name
     opponent = 'Sorry no opponent found'

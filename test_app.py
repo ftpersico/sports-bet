@@ -44,6 +44,5 @@ sample_data = {
 
 def test_create_dictionary():
     all_odds = {}
-    team = 'New York Yankees'
-    create_dictionary(sample_data)
+    create_dictionary(sample_data,'New York Yankees')
     assert all_odds == {"Paddy Power":-200,"Betfair":-250}
