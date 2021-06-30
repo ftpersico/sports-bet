@@ -2,11 +2,10 @@ import pytest
 from bets import create_dictionary
 
 
- 
 sample_data = {
   "success": "true",
   "data": [
-    {"id": "159fb6cae00fd84860e37a3e4ebf6ba5","sport_key": "baseball_mlb", "sport_nice": "MLB",
+    {"id": "111","sport_key": "baseball_mlb", "sport_nice": "MLB",
       "teams": ["Kansas City Royals", "New York Yankees"],
       "home_team": "New York Yankees",
       "commence_time": "2021-06-22T23:05:00Z",
@@ -22,7 +21,7 @@ sample_data = {
       ],
       "sites_count": 2
     },
-    {"id": "159fb6cae00fd84860e37a3e4ebf6ba5","sport_key": "baseball_mlb", "sport_nice": "MLB",
+    {"id": "111","sport_key": "baseball_mlb", "sport_nice": "MLB",
       "teams": ["Baltimore Orioles", "New York Yankees"],
       "home_team": "New York Yankees",
       "commence_time": "2021-06-23T23:05:00Z",
@@ -44,5 +43,7 @@ sample_data = {
 
 def test_create_dictionary():
     all_odds = {}
-    create_dictionary(sample_data,'New York Yankees')
-    assert all_odds == {"Betfair":-250,"Paddy Power":-200}
+    data = sample_data
+    all_odds = create_dictionary(data,'New York Yankees')
+    assert all_odds == {"Paddy Power":-200, "Betfair":-250}
+    print(all_odds)
