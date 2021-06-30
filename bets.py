@@ -122,7 +122,7 @@ if __name__ == "__main__":
     all_data = json.loads(response.text)
 
     # Call function to create odds dictionary
-    create_dictionary(all_data,team)
+    all_odds = create_dictionary(all_data,team)
 
     # Determine the opponenent and print name
     opponent = 'Sorry no opponent found'
